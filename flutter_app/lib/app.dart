@@ -25,16 +25,12 @@ class App extends StatelessWidget {
         builder: (context, state) {
           final userCubit = BlocProvider.of<UserCubit>(context);
           if (state is UserLoading) {
-            print("1");
             return CircularProgressIndicator();
           } else if (state is UserAuthenticated) {
-            print("2");
             return HomePage();
           } else if (state is UserNotAuthenicated) {
-            print("3");
             return FormPage();
           } else {
-            print("4");
             userCubit.checkUserCredential(MAIN_USER, appDatabase);
             return CircularProgressIndicator();
           }
