@@ -1,7 +1,8 @@
-import 'package:crypt/crypt.dart';
 import 'package:flutter/material.dart';
 
 import 'package:booking/data/app_database.dart';
+
+import 'package:booking/data/model/user.dart';
 
 class FormPage extends StatefulWidget {
   final AppDatabase appDatabase;
@@ -18,8 +19,10 @@ class _FormPage extends State<FormPage> {
   final TextEditingController passwordController = TextEditingController();
   final TextEditingController passwordSecureController =
       TextEditingController();
+  bool checkBoxValue = false;
   bool state = false;
   List<Widget> form;
+  User user = new User(id: -1, permits: -1);
 
   final ButtonStyle raisedButtonStyle = ElevatedButton.styleFrom(
     onPrimary: Colors.white,
@@ -51,7 +54,8 @@ class _FormPage extends State<FormPage> {
               if (value == null || value.isEmpty) {
                 return 'Please enter your email';
               } else {
-                if (checkEmail(value)) {
+                user.email = value;
+                if (user.isValid()) {
                   return 'Invalid email';
                 }
               }
@@ -73,6 +77,8 @@ class _FormPage extends State<FormPage> {
             validator: (value) {
               if (value == null || value.isEmpty) {
                 return 'Please enter your password';
+              } else {
+                user.crypt(value);
               }
               return null;
             },
@@ -83,7 +89,7 @@ class _FormPage extends State<FormPage> {
     ];
   }
 
-  updateForm() {
+  void updateForm() {
     state = !state;
     if (form.length == 2) {
       form.add(
@@ -116,17 +122,6 @@ class _FormPage extends State<FormPage> {
     }
   }
 
-  bool checkEmail(String email) {
-    return !RegExp(
-            r"^[a-zA-Z0-9.a-zA-Z0-9.!#$%&'*+-/=?^_`{|}~]+@itiszuccante.edu.it")
-        .hasMatch(email);
-  }
-
-  void validateLogin(String email, String plainPassowrd) {
-    final cryptedPassword = Crypt.sha256(plainPassowrd);
-    //TODO
-  }
-
   @override
   Widget build(BuildContext context) {
     return LayoutBuilder(
@@ -136,81 +131,110 @@ class _FormPage extends State<FormPage> {
         constraints: BoxConstraints(
           minHeight: viewportConstraints.maxHeight,
         ),
-        child: IntrinsicHeight(
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Container(
-                  height: 150,
-                  child: Center(
-                      child: Container(
-                          child: Text(
-                    "Benvenuto",
-                    style: TextStyle(fontSize: 30, color: Colors.blue),
-                  )))),
-              ClipRRect(
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.start,
-                  children: [
-                    Container(
-                      padding: EdgeInsets.all(6),
-                      child: Form(
-                        key: _formKey,
-                        child: Column(
-                          children: form,
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-              Expanded(
-                  child: ClipRRect(
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    ElevatedButton(
-                        style: raisedButtonStyle,
-                        onPressed: () {
-                          if (_formKey.currentState.validate()) {
-                            //false -> LOGIN
-                            if (state) {
-                              validateLogin(emailController.text,
-                                  passwordController.text);
-                            } else {
-                              //checkAndSaveUser();
-                            }
-                            ScaffoldMessenger.of(context).showSnackBar(
-                                SnackBar(content: Text("Loading..")));
-                          }
-                        },
-                        child: Text("SUBMIT")),
-                    Divider(
-                      indent: 130,
-                      endIndent: 130,
-                    ),
-                    ElevatedButton(
-                        style: raisedButtonStyle,
-                        onPressed: () {
-                          setState(() {
-                            _formKey.currentState.reset();
-                            updateForm();
-                          });
-                        },
-                        child: Text(state ? "LOGIN" : "SIGNUP")),
-                    Text(
-                      state
-                          ? "Clicca qui per accedere"
-                          : "Clicca qui per registrare un nuovo account",
-                      style: TextStyle(color: Colors.grey[800], fontSize: 13),
-                    )
-                  ],
-                ),
-              )),
-            ],
-          ),
-        ),
+        child: IntrinsicHeight(child: buildBody()),
       ));
     });
+  }
+
+  Widget buildBody() {
+    return Column(
+      mainAxisSize: MainAxisSize.min,
+      children: [buildTitle(), buildForm(), buildFormButtons()],
+    );
+  }
+
+  Widget buildTitle() {
+    return Container(
+        height: 150,
+        child: Center(
+            child: Container(
+                child: Text(
+          "Benvenuto",
+          style: TextStyle(fontSize: 30, color: Colors.blue),
+        ))));
+  }
+
+  Widget buildForm() {
+    return ClipRRect(
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.start,
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Container(
+            padding: EdgeInsets.all(6),
+            child: Form(
+              key: _formKey,
+              child: Column(
+                children: form,
+              ),
+            ),
+          ),
+          (!state)
+              ? Row(
+                  children: [
+                    Checkbox(
+                        value: checkBoxValue,
+                        onChanged: (value) {
+                          setState(() {
+                            checkBoxValue = value;
+                          });
+                        }),
+                    Text(
+                      "Ricordami",
+                      style: TextStyle(color: Colors.blue),
+                    )
+                  ],
+                )
+              : Container()
+        ],
+      ),
+    );
+  }
+
+  Widget buildFormButtons() {
+    return Expanded(
+        child: ClipRRect(
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          ElevatedButton(
+              style: raisedButtonStyle,
+              onPressed: () {
+                if (_formKey.currentState.validate()) {
+                  //false -> LOGIN
+
+                  if (state) {
+                  } else {
+                    user.keepMeLogged = checkBoxValue;
+                    //checkAndSaveUser();
+                  }
+
+                  ScaffoldMessenger.of(context)
+                      .showSnackBar(SnackBar(content: Text(user.toString())));
+                }
+              },
+              child: Text("SUBMIT")),
+          Divider(
+            indent: 130,
+            endIndent: 130,
+          ),
+          ElevatedButton(
+              style: raisedButtonStyle,
+              onPressed: () {
+                setState(() {
+                  _formKey.currentState.reset();
+                  updateForm();
+                });
+              },
+              child: Text(state ? "LOGIN" : "SIGNUP")),
+          Text(
+            state
+                ? "Clicca qui per accedere"
+                : "Clicca qui per registrare un nuovo account",
+            style: TextStyle(color: Colors.grey[800], fontSize: 13),
+          )
+        ],
+      ),
+    ));
   }
 }

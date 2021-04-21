@@ -1,3 +1,4 @@
+import 'package:crypt/crypt.dart';
 import 'package:floor/floor.dart';
 
 @Entity(tableName: 'user')
@@ -37,6 +38,25 @@ class User {
         this.email != null &&
         this.password != null &&
         this.keepMeLogged != null;
+  }
+
+  bool isValid() {
+    return _isEmailValid();
+  }
+
+  void crypt(String plainPassowrd) {
+    this.password = Crypt.sha256(plainPassowrd).toString();
+  }
+
+  bool _isEmailValid() {
+    return !RegExp(
+            r"^[a-zA-Z0-9.a-zA-Z0-9.!#$%&'*+-/=?^_`{|}~]+@itiszuccante.edu.it")
+        .hasMatch(this.email);
+  }
+
+  @override
+  String toString() {
+    return 'User(id: $id, permits: $permits, email: $email, password: $password, keepMeLogged: $keepMeLogged)';
   }
 }
 
