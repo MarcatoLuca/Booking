@@ -9,6 +9,22 @@ class UserInitial extends UserState {
   const UserInitial();
 }
 
+class UserNotConnected extends UserState {
+  final String message;
+
+  const UserNotConnected(this.message);
+
+  @override
+  bool operator ==(Object other) {
+    if (identical(this, other)) return true;
+
+    return other is UserNotConnected && other.message == message;
+  }
+
+  @override
+  int get hashCode => message.hashCode;
+}
+
 class UserLoading extends UserState {
   const UserLoading();
 }

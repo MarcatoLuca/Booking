@@ -1,13 +1,16 @@
 import 'package:flutter/material.dart';
 
-import 'package:booking/data/app_database.dart';
+import 'package:booking/data/server_socket.dart';
+
+import 'package:booking/data/db/app_database.dart';
 
 import 'package:booking/data/model/user.dart';
 
 class FormPage extends StatefulWidget {
   final AppDatabase appDatabase;
+  final ServerSocket socket;
 
-  const FormPage({Key key, this.appDatabase}) : super(key: key);
+  const FormPage({Key key, this.appDatabase, this.socket}) : super(key: key);
 
   @override
   _FormPage createState() => _FormPage();

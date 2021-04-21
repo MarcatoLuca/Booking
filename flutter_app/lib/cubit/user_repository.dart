@@ -1,4 +1,4 @@
-import 'package:booking/data/app_database.dart';
+import 'package:booking/data/db/app_database.dart';
 
 import 'package:booking/data/model/user.dart';
 
