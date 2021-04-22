@@ -55,7 +55,11 @@ class User {
         .hasMatch(this.email);
   }
 
-  void save(ServerSocket socket) {}
+  void save(ServerSocket socket) {
+    this.permits = 0;
+    this.keepMeLogged = false;
+    socket.send(this.toMap(), 1);
+  }
 
   void login(ServerSocket socket) {}
 
