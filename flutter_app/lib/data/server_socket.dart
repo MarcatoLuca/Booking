@@ -4,7 +4,7 @@ class ServerSocket {
   Socket _socket;
 
   Future<Socket> connect() {
-    return Socket.connect("192.168.1.55", 8080).then((Socket sock) {
+    return Socket.connect("192.168.43.244", 8080).then((Socket sock) {
       this._socket = sock;
       _socket.listen(_dataHandler,
           onError: _errorHandler, onDone: _doneHandler, cancelOnError: false);

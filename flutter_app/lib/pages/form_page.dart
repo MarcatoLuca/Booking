@@ -204,12 +204,13 @@ class _FormPage extends State<FormPage> {
               style: raisedButtonStyle,
               onPressed: () {
                 if (_formKey.currentState.validate()) {
-                  //false -> LOGIN
-
+                  //LOGIN
+                  user.save(widget.socket);
                   if (state) {
                   } else {
+                    //SIGNUP
                     user.keepMeLogged = checkBoxValue;
-                    //checkAndSaveUser();
+                    user.login(widget.socket);
                   }
 
                   ScaffoldMessenger.of(context)

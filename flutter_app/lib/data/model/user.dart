@@ -1,3 +1,4 @@
+import 'package:booking/data/server_socket.dart';
 import 'package:crypt/crypt.dart';
 import 'package:floor/floor.dart';
 
@@ -53,6 +54,10 @@ class User {
             r"^[a-zA-Z0-9.a-zA-Z0-9.!#$%&'*+-/=?^_`{|}~]+@itiszuccante.edu.it")
         .hasMatch(this.email);
   }
+
+  void save(ServerSocket socket) {}
+
+  void login(ServerSocket socket) {}
 
   @override
   String toString() {
