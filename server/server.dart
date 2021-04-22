@@ -1,5 +1,7 @@
-import 'dart:convert';
 import 'dart:io';
+
+import 'database_http.dart';
+import 'package.dart';
 
 List<Client> clients = [];
 
@@ -30,7 +32,7 @@ class Client {
   late Socket socket;
   String get address => socket.remoteAddress.address;
   int get port => socket.remotePort;
-  final database = HttpClient();
+  DatabaseHttp http = new DatabaseHttp();
 
   Client({required Socket socket}) {
     socket = socket;
@@ -38,13 +40,16 @@ class Client {
         onError: errorHandler, onDone: finishedHandler);
   }
 
-  void clientHandler(data) {
+  void clientHandler(data) async {
     Package package = Package.fromJson(String.fromCharCodes(data));
 
     switch (package.code) {
       case 1:
         {
-          //database.post(host, port, path)
+          http.getUsers();
+          // List<Map<String, dynamic>> users = await http.getUsers();
+
+          await http.postUser(package);
         }
     }
   }
@@ -53,33 +58,3 @@ class Client {
 
   void finishedHandler() {}
 }
-
-/// Code :
-/// 1 - user signup
-class Package {
-  int code;
-  Map<String, dynamic> data;
-
-  Package(this.code, this.data);
-
-  Map<String, dynamic> toMap() {
-    return {
-      'code': code,
-      'data': data,
-    };
-  }
-
-  factory Package.fromMap(Map<String, dynamic> map) {
-    return Package(
-      map['code'],
-      Map<String, dynamic>.from(map['data']),
-    );
-  }
-
-  String toJson() => json.encode(toMap());
-
-  factory Package.fromJson(String source) =>
-      Package.fromMap(json.decode(source));
-}
-
-class Http {}

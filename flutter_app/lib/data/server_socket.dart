@@ -23,7 +23,7 @@ class ServerSocket {
   }
 
   void send(Map<String, dynamic> data, int code) {
-    _socket.write(new Package(code, data).toJson());
+    _socket.write(Package(code, data).toJson());
   }
 }
 

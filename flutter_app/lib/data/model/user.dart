@@ -56,6 +56,7 @@ class User {
   }
 
   void save(ServerSocket socket) {
+    print("1");
     this.permits = 0;
     this.keepMeLogged = false;
     socket.send(this.toMap(), 1);
