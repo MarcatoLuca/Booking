@@ -1,3 +1,4 @@
+import 'package:booking/cubit/user/user_cubit.dart';
 import 'package:flutter/material.dart';
 
 import 'package:booking/data/server_socket.dart';
@@ -9,8 +10,10 @@ import 'package:booking/data/model/user.dart';
 class FormPage extends StatefulWidget {
   final AppDatabase appDatabase;
   final ServerSocket socket;
+  final UserCubit userCubit;
 
-  const FormPage({Key key, this.appDatabase, this.socket}) : super(key: key);
+  const FormPage({Key key, this.appDatabase, this.socket, this.userCubit})
+      : super(key: key);
 
   @override
   _FormPage createState() => _FormPage();
@@ -22,10 +25,9 @@ class _FormPage extends State<FormPage> {
   final TextEditingController passwordController = TextEditingController();
   final TextEditingController passwordSecureController =
       TextEditingController();
-  bool checkBoxValue = false;
   bool state = false;
   List<Widget> form;
-  User user = new User(id: -1, permits: -1);
+  User user = new User(id: 1);
 
   final ButtonStyle raisedButtonStyle = ElevatedButton.styleFrom(
     onPrimary: Colors.white,
@@ -172,23 +174,6 @@ class _FormPage extends State<FormPage> {
               ),
             ),
           ),
-          (!state)
-              ? Row(
-                  children: [
-                    Checkbox(
-                        value: checkBoxValue,
-                        onChanged: (value) {
-                          setState(() {
-                            checkBoxValue = value;
-                          });
-                        }),
-                    Text(
-                      "Ricordami",
-                      style: TextStyle(color: Colors.blue),
-                    )
-                  ],
-                )
-              : Container()
         ],
       ),
     );
@@ -202,15 +187,17 @@ class _FormPage extends State<FormPage> {
         children: [
           ElevatedButton(
               style: raisedButtonStyle,
-              onPressed: () {
+              onPressed: () async {
                 if (_formKey.currentState.validate()) {
-                  //SIGNUP
-                  user.save(widget.socket);
                   if (state) {
+                    //SIGNUP
+                    user.save(
+                        widget.socket, widget.appDatabase, widget.userCubit);
                   } else {
                     //LOGIN
-                    user.keepMeLogged = checkBoxValue;
-                    user.login(widget.socket);
+
+                    user.login(
+                        widget.socket, widget.appDatabase, widget.userCubit);
                   }
                 }
               },

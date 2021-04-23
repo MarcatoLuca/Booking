@@ -80,7 +80,7 @@ class _$AppDatabase extends AppDatabase {
       },
       onCreate: (database, version) async {
         await database.execute(
-            'CREATE TABLE IF NOT EXISTS `user` (`id` INTEGER PRIMARY KEY AUTOINCREMENT, `permits` INTEGER, `email` TEXT, `password` TEXT, `keepMeLogged` INTEGER)');
+            'CREATE TABLE IF NOT EXISTS `user` (`id` INTEGER, `email` TEXT, `password` TEXT, `type` TEXT, `keepMeLogged` INTEGER, PRIMARY KEY (`id`))');
 
         await callback?.onCreate?.call(database, version);
       },
@@ -96,7 +96,19 @@ class _$AppDatabase extends AppDatabase {
 
 class _$UserDao extends UserDao {
   _$UserDao(this.database, this.changeListener)
-      : _queryAdapter = QueryAdapter(database);
+      : _queryAdapter = QueryAdapter(database),
+        _userInsertionAdapter = InsertionAdapter(
+            database,
+            'user',
+            (User item) => <String, dynamic>{
+                  'id': item.id,
+                  'email': item.email,
+                  'password': item.password,
+                  'type': item.type,
+                  'keepMeLogged': item.keepMeLogged == null
+                      ? null
+                      : (item.keepMeLogged ? 1 : 0)
+                });
 
   final sqflite.DatabaseExecutor database;
 
@@ -104,17 +116,24 @@ class _$UserDao extends UserDao {
 
   final QueryAdapter _queryAdapter;
 
+  final InsertionAdapter<User> _userInsertionAdapter;
+
   @override
   Future<User> getUser(int id) async {
     return _queryAdapter.query('SELECT * FROM user WHERE user.id = ?',
         arguments: <dynamic>[id],
         mapper: (Map<String, dynamic> row) => User(
             id: row['id'] as int,
-            permits: row['permits'] as int,
+            type: row['type'] as String,
             email: row['email'] as String,
             password: row['password'] as String,
             keepMeLogged: row['keepMeLogged'] == null
                 ? null
                 : (row['keepMeLogged'] as int) != 0));
+  }
+
+  @override
+  Future<void> insertUser(User user) async {
+    await _userInsertionAdapter.insert(user, OnConflictStrategy.replace);
   }
 }

@@ -1,44 +1,45 @@
-import 'package:booking/data/server_socket.dart';
-import 'package:crypt/crypt.dart';
 import 'package:floor/floor.dart';
+
+import 'package:crypt/crypt.dart';
+
+import 'package:booking/cubit/user/user_cubit.dart';
+
+import 'package:booking/data/db/app_database.dart';
+
+import 'package:booking/data/server_socket.dart';
 
 @Entity(tableName: 'user')
 class User {
-  @PrimaryKey(autoGenerate: true)
+  @PrimaryKey(autoGenerate: false)
   final int id;
-  int permits;
   String email;
   String password;
-  bool keepMeLogged;
+  String type;
 
-  User({int id, int permits, String email, String password, bool keepMeLogged})
+  User({int id, String type, String email, String password, bool keepMeLogged})
       : id = id,
-        permits = permits,
+        type = type,
         email = email,
-        password = password,
-        keepMeLogged = keepMeLogged;
+        password = password;
 
   Map<String, dynamic> toMap() => {
         "email": this.email,
-        "permits": this.permits,
         "password": this.password,
-        "keepMeLogged": this.keepMeLogged,
+        "type": this.type,
       };
 
   factory User.fromJson(Map<String, dynamic> json) => new User(
         id: json["id"],
-        permits: json["permits"],
         email: json["email"],
         password: json["password"],
-        keepMeLogged: json["keepMeLogged"],
+        type: json["type"],
       );
 
   bool isNotNull() {
     return this.id != null &&
-        this.permits != null &&
+        this.type != null &&
         this.email != null &&
-        this.password != null &&
-        this.keepMeLogged != null;
+        this.password != null;
   }
 
   bool isValid() {
@@ -51,22 +52,26 @@ class User {
 
   bool _isEmailValid() {
     return !RegExp(
-            r"^[a-zA-Z0-9.a-zA-Z0-9.!#$%&'*+-/=?^_`{|}~]+@itiszuccante.edu.it")
+            r"^[a-zA-Z0-9.a-zA-Z0-9.!#$%&'*+-/=?^_`{|}~]+@itiszuccante.edu.it$")
         .hasMatch(this.email);
   }
 
-  void save(ServerSocket socket) {
-    print("1");
-    this.permits = 0;
-    this.keepMeLogged = false;
+  void save(
+      ServerSocket socket, AppDatabase appDatabase, UserCubit userCubit) async {
+    this.type = "USER";
     socket.send(this.toMap(), 1);
+    userCubit.tryLogin(socket, appDatabase, this);
   }
 
-  void login(ServerSocket socket) {}
+  void login(
+      ServerSocket socket, AppDatabase appDatabase, UserCubit userCubit) {
+    socket.send(this.toMap(), 2);
+    userCubit.tryLogin(socket, appDatabase, this);
+  }
 
   @override
   String toString() {
-    return 'User(id: $id, permits: $permits, email: $email, password: $password, keepMeLogged: $keepMeLogged)';
+    return 'User(id: $id, email: $email, password: $password, type: $type)';
   }
 }
 
@@ -74,4 +79,7 @@ class User {
 abstract class UserDao {
   @Query('SELECT * FROM user WHERE user.id = :id')
   Future<User> getUser(int id);
+
+  @Insert(onConflict: OnConflictStrategy.replace)
+  Future<void> insertUser(User user);
 }

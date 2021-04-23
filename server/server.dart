@@ -35,7 +35,7 @@ class Client {
   DatabaseHttp http = new DatabaseHttp();
 
   Client({required Socket socket}) {
-    socket = socket;
+    this.socket = socket;
     socket.listen(clientHandler,
         onError: errorHandler, onDone: finishedHandler);
   }
@@ -46,14 +46,50 @@ class Client {
     switch (package.code) {
       case 1:
         {
+          print(1);
           List<Package> response = await http.getUsers();
-          bool stop = false;
-          response.forEach((element) {
-            stop = element.data.containsValue(package.data[
-                "email"]); // sistemare stop che prende solo il valore dell ultimo controllo fatto
-          });
 
-          if (!stop) await http.postUser(package);
+          bool userAlreadyExist = response
+              .where((element) =>
+                  element.data.containsValue(package.data["email"]))
+              .isNotEmpty;
+
+          if (!userAlreadyExist) {
+            await http.postUser(package);
+            this.socket.write(
+                new Package(1, new Map<String, dynamic>(), "OK").toJson());
+          } else {
+            this.socket.write(
+                new Package(1, new Map<String, dynamic>(), "ERROR").toJson());
+          }
+          break;
+        }
+      case 2:
+        {
+          print(2);
+          print(package.data.toString());
+          await http.updateUser(package.data);
+          List<Package> response = await http.getUsers();
+          bool userAlreadyExist = response
+              .where((element) =>
+                  element.data.containsValue(package.data["email"]))
+              .isNotEmpty;
+
+          if (userAlreadyExist) {
+            this.socket.write(new Package(
+                    2,
+                    response
+                        .where((element) =>
+                            element.data.containsValue(package.data["email"]))
+                        .single
+                        .data,
+                    "OK")
+                .toJson());
+          } else {
+            this.socket.write(
+                new Package(2, new Map<String, dynamic>(), "ERROR").toJson());
+          }
+          break;
         }
     }
   }

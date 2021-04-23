@@ -22,9 +22,18 @@ class DatabaseHttp {
       List<dynamic> parsed = jsonDecode(contents);
       parsed.forEach((element) {
         Map<String, dynamic> data = element as Map<String, dynamic>;
-        message.add(new Package(0, data));
+        message.add(new Package(0, data, ""));
       });
     }).asFuture();
     return message;
+  }
+
+  Future<void> updateUser(Map<String, dynamic> data) async {
+    print(data['email']);
+    await http.put("192.168.1.55", 3000, "/user?email=$data['email']")
+      ..headers
+          .set(HttpHeaders.contentTypeHeader, "application/json; charset=UTF-8")
+      ..write(jsonEncode(data))
+      ..close();
   }
 }

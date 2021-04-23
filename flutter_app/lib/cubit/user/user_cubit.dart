@@ -25,7 +25,7 @@ class UserCubit extends Cubit<UserState> {
       socket.connect().whenComplete(() async {
         final User user = await _userRepository.getUserCredentail(id, db);
         if (user != null) {
-          emit(UserAuthenticated(user));
+          emit(UserNotAuthenicated("User Not Authenicated"));
         } else {
           emit(UserNotAuthenicated("User Not Authenicated"));
         }
@@ -33,5 +33,23 @@ class UserCubit extends Cubit<UserState> {
     } on SocketException catch (e) {
       emit(UserNotConnected('$e'));
     }
+  }
+
+  void tryLogin(ServerSocket socket, AppDatabase appDatabase, User user) async {
+    emit(UserLoading());
+    await Future.delayed(Duration(seconds: 2)).whenComplete(() async {
+      String status = socket.messages.last.msg;
+      if (status == "OK") {
+        if (socket.messages.last.code == 1) {
+          await appDatabase.userDao.insertUser(user);
+        } else if (socket.messages.last.code == 2) {
+          await appDatabase.userDao
+              .insertUser(new User.fromJson(socket.messages.last.data));
+        }
+        emit(UserAuthenticated(user));
+      } else if (status == "ERROR") {
+        emit(UserNotAuthenicated("This User Already Exist"));
+      }
+    });
   }
 }
