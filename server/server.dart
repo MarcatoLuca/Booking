@@ -46,10 +46,14 @@ class Client {
     switch (package.code) {
       case 1:
         {
-          http.getUsers();
-          // List<Map<String, dynamic>> users = await http.getUsers();
+          List<Package> response = await http.getUsers();
+          bool stop = false;
+          response.forEach((element) {
+            stop = element.data.containsValue(package.data[
+                "email"]); // sistemare stop che prende solo il valore dell ultimo controllo fatto
+          });
 
-          await http.postUser(package);
+          if (!stop) await http.postUser(package);
         }
     }
   }

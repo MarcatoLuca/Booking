@@ -8,46 +8,39 @@
       "id": 1
     },
     {
-      "email": "a@itiszuccante.edu.it",
+      "email": "ba@itiszuccante.edu.it",
       "permits": 0,
-      "password": "$5$4QqhgwlnNRJBcpBe$AfJYyWyOISm5Kx3t/jmczB7ED.LVfepgY1kbTM0QVF6",
+      "password": "$5$peyv9CQRhkFyS8aN$AxX1rdkj.gVqoO5UB/yQ0XKQgppXuWXNX6Dm5VZHOb1",
       "keepMeLogged": false,
       "id": 2
     },
     {
-      "email": "a@itiszuccante.edu.it",
+      "email": "b@itiszuccante.edu.it",
       "permits": 0,
-      "password": "$5$4ZvmJ7aZbKmmAbhF$CyhmvuaCSwbY8vdGk2aKb1YadgNts5QKcwxUo1iZA6.",
+      "password": "$5$xE4VMBIagdFXoi9N$K6TSCvxiAN9bEgQT3QLvaxaeZbupqkXM79.Eo1xJOM8",
       "keepMeLogged": false,
       "id": 3
     },
     {
-      "email": "a@itiszuccante.edu.it",
+      "email": "ba@itiszuccante.edu.it",
       "permits": 0,
-      "password": "$5$tpe8JW1YTL48iqsf$9Uwq5e8RigXEhwr/80pnXUMCjW2fHscrFa0QaSorMb/",
+      "password": "$5$2h5hWt70daoLNtuT$7oOwAVwE.sKVWF7L.UWnS11/ud9lnK.7x0LBuWYlDO4",
       "keepMeLogged": false,
       "id": 4
     },
     {
-      "email": "a@itiszuccante.edu.it",
+      "email": "b@itiszuccante.edu.it",
       "permits": 0,
-      "password": "$5$VFQ2h24BM2PffhRx$U0LJP.y7IABsTwh4uDHKrjN6SJ8M3d9nL1VXUZwfJZ5",
+      "password": "$5$MThfEdyt5XKveKQH$Wm9jXbo5DUCg/8FenCSI6ZY5sN2kE2HrWjGZHjptkvC",
       "keepMeLogged": false,
       "id": 5
     },
     {
       "email": "a@itiszuccante.edu.it",
       "permits": 0,
-      "password": "$5$ebKDEqg60sHOtK1Y$MTR/kZnO4DlhrR9D.d2HyqPjvzjio3w151BMjxnwKhB",
+      "password": "$5$VeZbnOWtQvfZEQvk$dQHDh9lqY7nRSdcEVD1ZOTZJ/3zE8KGBSKkz4tdM943",
       "keepMeLogged": false,
       "id": 6
-    },
-    {
-      "email": "a@itiszuccante.edu.it",
-      "permits": 0,
-      "password": "$5$yHXR6hw0RWxl8fAp$ASPY/R6m6Ps9zR2lvN1ocwVGSUFrpUEHtQrHqhJ4fg0",
-      "keepMeLogged": false,
-      "id": 7
     }
   ]
 }

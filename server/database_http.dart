@@ -14,17 +14,17 @@ class DatabaseHttp {
       ..close();
   }
 
-  Future<List<Map<String, dynamic>>> getUsers() async {
-    List<Map<String, dynamic>> parsed;
+  Future<List<Package>> getUsers() async {
+    List<Package> message = [];
     var request = await http.get("192.168.1.55", 3000, "/user");
     var response = await request.close();
-    response.transform(utf8.decoder).listen((contents) {
-      parsed = (jsonDecode(contents))
-          .map((e) => e as Map<String, dynamic>)
-          ?.toList();
-      print(parsed.runtimeType);
-    });
-
-    return parsed;
+    await response.transform(utf8.decoder).listen((contents) {
+      List<dynamic> parsed = jsonDecode(contents);
+      parsed.forEach((element) {
+        Map<String, dynamic> data = element as Map<String, dynamic>;
+        message.add(new Package(0, data));
+      });
+    }).asFuture();
+    return message;
   }
 }
