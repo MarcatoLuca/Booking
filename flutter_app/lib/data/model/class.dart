@@ -43,7 +43,7 @@ abstract class ClassTableDao {
   @Query('SELECT * FROM class')
   Future<List<Class>> findAllClass();
 
-  @insert
+  @Insert(onConflict: OnConflictStrategy.replace)
   Future<void> addClass(Class classRoom);
 
   @delete

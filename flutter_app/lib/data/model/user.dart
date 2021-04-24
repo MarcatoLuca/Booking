@@ -82,4 +82,7 @@ abstract class UserDao {
 
   @Insert(onConflict: OnConflictStrategy.replace)
   Future<void> insertUser(User user);
+
+  @delete
+  Future<void> deleteUser(User user);
 }

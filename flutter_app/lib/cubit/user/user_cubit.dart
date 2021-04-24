@@ -36,7 +36,7 @@ class UserCubit extends Cubit<UserState> {
     }
   }
 
-  void tryLogin(AppDatabase appDatabase, User user, bool save) async {
+  Future<void> tryLogin(AppDatabase appDatabase, User user, bool save) async {
     emit(UserLoading());
     user.id = App.MAIN_USER;
     if (user.isNotNull()) {
@@ -47,5 +47,11 @@ class UserCubit extends Cubit<UserState> {
     } else {
       emit(UserNotAuthenicated("This User Already Exist"));
     }
+  }
+
+  Future<void> logout(AppDatabase appDatabase, User user) async {
+    emit(UserLoading());
+    await appDatabase.userDao.deleteUser(user);
+    emit(UserNotAuthenicated("Login To Access"));
   }
 }

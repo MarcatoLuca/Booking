@@ -33,7 +33,10 @@ class App extends StatelessWidget {
             return CircularProgressIndicator();
           } else if (state is UserAuthenticated) {
             return HomePage(
-                appDatabase: appDatabase, socket: socket, userCubit: userCubit);
+                user: state.user,
+                appDatabase: appDatabase,
+                socket: socket,
+                userCubit: userCubit);
           } else if (state is UserNotAuthenicated) {
             return FormPage(
                 appDatabase: appDatabase, socket: socket, userCubit: userCubit);

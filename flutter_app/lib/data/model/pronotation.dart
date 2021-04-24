@@ -76,7 +76,7 @@ abstract class PrenotationTableDao {
   @Query('SELECT * FROM Prenotation WHERE Prenotation.userId = :userId')
   Future<List<Prenotation>> findAllPrenotationByUserId();
 
-  @insert
+  @Insert(onConflict: OnConflictStrategy.replace)
   Future<void> addPrenotation(Prenotation prenotation);
   @delete
   Future<void> deletePrenotation(Prenotation prenotation);

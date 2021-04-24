@@ -105,6 +105,16 @@ class _$UserDao extends UserDao {
                   'email': item.email,
                   'password': item.password,
                   'type': item.type
+                }),
+        _userDeletionAdapter = DeletionAdapter(
+            database,
+            'user',
+            ['id'],
+            (User item) => <String, dynamic>{
+                  'id': item.id,
+                  'email': item.email,
+                  'password': item.password,
+                  'type': item.type
                 });
 
   final sqflite.DatabaseExecutor database;
@@ -114,6 +124,8 @@ class _$UserDao extends UserDao {
   final QueryAdapter _queryAdapter;
 
   final InsertionAdapter<User> _userInsertionAdapter;
+
+  final DeletionAdapter<User> _userDeletionAdapter;
 
   @override
   Future<User> getUser(int id) async {
@@ -129,5 +141,10 @@ class _$UserDao extends UserDao {
   @override
   Future<void> insertUser(User user) async {
     await _userInsertionAdapter.insert(user, OnConflictStrategy.replace);
+  }
+
+  @override
+  Future<void> deleteUser(User user) async {
+    await _userDeletionAdapter.delete(user);
   }
 }
