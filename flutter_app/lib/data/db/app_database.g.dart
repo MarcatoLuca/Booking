@@ -80,7 +80,7 @@ class _$AppDatabase extends AppDatabase {
       },
       onCreate: (database, version) async {
         await database.execute(
-            'CREATE TABLE IF NOT EXISTS `user` (`id` INTEGER, `email` TEXT, `password` TEXT, `type` TEXT, `keepMeLogged` INTEGER, PRIMARY KEY (`id`))');
+            'CREATE TABLE IF NOT EXISTS `user` (`id` INTEGER, `email` TEXT, `password` TEXT, `type` TEXT, PRIMARY KEY (`id`))');
 
         await callback?.onCreate?.call(database, version);
       },
@@ -104,10 +104,7 @@ class _$UserDao extends UserDao {
                   'id': item.id,
                   'email': item.email,
                   'password': item.password,
-                  'type': item.type,
-                  'keepMeLogged': item.keepMeLogged == null
-                      ? null
-                      : (item.keepMeLogged ? 1 : 0)
+                  'type': item.type
                 });
 
   final sqflite.DatabaseExecutor database;
@@ -126,10 +123,7 @@ class _$UserDao extends UserDao {
             id: row['id'] as int,
             type: row['type'] as String,
             email: row['email'] as String,
-            password: row['password'] as String,
-            keepMeLogged: row['keepMeLogged'] == null
-                ? null
-                : (row['keepMeLogged'] as int) != 0));
+            password: row['password'] as String));
   }
 
   @override
