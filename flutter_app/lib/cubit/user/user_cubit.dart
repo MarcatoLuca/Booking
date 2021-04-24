@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:bloc/bloc.dart';
+import 'package:booking/app.dart';
 
 import 'package:meta/meta.dart';
 
@@ -25,7 +26,7 @@ class UserCubit extends Cubit<UserState> {
       socket.connect().whenComplete(() async {
         final User user = await _userRepository.getUserCredentail(id, db);
         if (user != null) {
-          emit(UserNotAuthenicated("User Not Authenicated"));
+          emit(UserAuthenticated(user));
         } else {
           emit(UserNotAuthenicated("User Not Authenicated"));
         }
@@ -35,21 +36,16 @@ class UserCubit extends Cubit<UserState> {
     }
   }
 
-  void tryLogin(ServerSocket socket, AppDatabase appDatabase, User user) async {
+  void tryLogin(AppDatabase appDatabase, User user, bool save) async {
     emit(UserLoading());
-    await Future.delayed(Duration(seconds: 2)).whenComplete(() async {
-      String status = socket.messages.last.msg;
-      if (status == "OK") {
-        if (socket.messages.last.code == 1) {
-          await appDatabase.userDao.insertUser(user);
-        } else if (socket.messages.last.code == 2) {
-          await appDatabase.userDao
-              .insertUser(new User.fromJson(socket.messages.last.data));
-        }
-        emit(UserAuthenticated(user));
-      } else if (status == "ERROR") {
-        emit(UserNotAuthenicated("This User Already Exist"));
+    user.id = App.MAIN_USER;
+    if (user.isNotNull()) {
+      if (save) {
+        await appDatabase.userDao.insertUser(user);
       }
-    });
+      emit(UserAuthenticated(user));
+    } else {
+      emit(UserNotAuthenicated("This User Already Exist"));
+    }
   }
 }

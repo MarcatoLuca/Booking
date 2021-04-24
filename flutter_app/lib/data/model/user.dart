@@ -11,7 +11,7 @@ import 'package:booking/data/server_socket.dart';
 @Entity(tableName: 'user')
 class User {
   @PrimaryKey(autoGenerate: false)
-  final int id;
+  int id;
   String email;
   String password;
   String type;
@@ -59,14 +59,14 @@ class User {
   void save(
       ServerSocket socket, AppDatabase appDatabase, UserCubit userCubit) async {
     this.type = "USER";
-    socket.send(this.toMap(), 1);
-    userCubit.tryLogin(socket, appDatabase, this);
+    User user = await socket.saveOrLogin(this.toMap(), 1);
+    userCubit.tryLogin(appDatabase, user, true);
   }
 
   void login(
-      ServerSocket socket, AppDatabase appDatabase, UserCubit userCubit) {
-    socket.send(this.toMap(), 2);
-    userCubit.tryLogin(socket, appDatabase, this);
+      ServerSocket socket, AppDatabase appDatabase, UserCubit userCubit) async {
+    User user = await socket.saveOrLogin(this.toMap(), 2);
+    userCubit.tryLogin(appDatabase, user, false);
   }
 
   @override

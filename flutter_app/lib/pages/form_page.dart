@@ -195,7 +195,6 @@ class _FormPage extends State<FormPage> {
                         widget.socket, widget.appDatabase, widget.userCubit);
                   } else {
                     //LOGIN
-
                     user.login(
                         widget.socket, widget.appDatabase, widget.userCubit);
                   }

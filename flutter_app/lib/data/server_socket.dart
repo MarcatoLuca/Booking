@@ -1,6 +1,8 @@
 import 'dart:convert';
 import 'dart:io';
 
+import 'package:booking/data/model/user.dart';
+
 class ServerSocket {
   Socket _socket;
   List<Package> messages = [];
@@ -39,8 +41,17 @@ class ServerSocket {
     _socket.destroy();
   }
 
-  void send(Map<String, dynamic> data, int code) async {
-    _socket.write(Package(code, data, "").toJson());
+  Future<User> saveOrLogin(Map<String, dynamic> data, int code) async {
+    User user;
+    await Socket.connect("192.168.1.55", 8080).then((Socket sock) async {
+      sock.write(Package(code, data, "").toJson());
+      await sock.listen((data) {
+        Package package = Package.fromJson(String.fromCharCodes(data));
+        sock.destroy();
+        user = new User.fromJson(package.data);
+      }).asFuture();
+    });
+    return user;
   }
 }
 

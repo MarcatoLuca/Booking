@@ -40,9 +40,7 @@ class HomeTab extends StatelessWidget {
                                 onPressed: () {
                                   showDialog(
                                     context: context,
-                                    builder: (BuildContext context) =>
-                                        _buildAboutDialog(context, selectedDate,
-                                            selectedFTime, selectedSTime),
+                                    // builder: (BuildContext context) =>_buildAboutDialog(context, selectedDate,selectedFTime, selectedSTime),
                                   );
                                 },
                                 child: const Text('PRENOTA'),
@@ -52,7 +50,7 @@ class HomeTab extends StatelessWidget {
                     ),
                   );
                 },
-                itemCount: counter,
+                //itemCount: counter,
               ),
             ),
           ],

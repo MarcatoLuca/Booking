@@ -46,7 +46,6 @@ class Client {
     switch (package.code) {
       case 1:
         {
-          print(1);
           List<Package> response = await http.getUsers();
 
           bool userAlreadyExist = response
@@ -56,8 +55,7 @@ class Client {
 
           if (!userAlreadyExist) {
             await http.postUser(package);
-            this.socket.write(
-                new Package(1, new Map<String, dynamic>(), "OK").toJson());
+            this.socket.write(new Package(1, package.data, "OK").toJson());
           } else {
             this.socket.write(
                 new Package(1, new Map<String, dynamic>(), "ERROR").toJson());
@@ -66,7 +64,6 @@ class Client {
         }
       case 2:
         {
-          print(2);
           print(package.data.toString());
           await http.updateUser(package.data);
           List<Package> response = await http.getUsers();
@@ -96,5 +93,7 @@ class Client {
 
   void errorHandler(error) {}
 
-  void finishedHandler() {}
+  void finishedHandler() {
+    print("Closed");
+  }
 }

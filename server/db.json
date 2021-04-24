@@ -5,6 +5,42 @@
       "password": "$5$m3EtYA1JCjgm6Oo2$rrtW4/hYiNf.3cIJP2qCJ78yGDBRjG5nREY1pl9XyV8",
       "type": "USER",
       "id": 1
+    },
+    {
+      "email": "a@itiszuccante.edu.it",
+      "password": "$5$rWmt8KfI5VNtynpr$QW8xr4YNH.EwyuZHJsnme6HUNVU.rqFzKuzzz7CT5e3",
+      "type": "USER",
+      "id": 2
+    },
+    {
+      "email": "b@itiszuccante.edu.it",
+      "password": "$5$IY96NLw61Nw7F34j$uj85uold59d7qUzKcaKuCiLlHKCEPCMXtAAX8...nXD",
+      "type": "USER",
+      "id": 3
+    },
+    {
+      "email": "ab@itiszuccante.edu.it",
+      "password": "$5$hZOloHpaiGX3kGYP$A/LzGhgHMqR/K84Egd0XumPmbZWIFvvD0NU9Ovd3wK/",
+      "type": "USER",
+      "id": 4
+    },
+    {
+      "email": "vb@itiszuccante.edu.it",
+      "password": "$5$0YoCLlC4nheESy3J$uGVVwxuusipoqGvLyP29VB6sb0w.XENflqgzi4PLXu5",
+      "type": "USER",
+      "id": 5
+    },
+    {
+      "email": "asd@itiszuccante.edu.it",
+      "password": "$5$oJ277NP7wWAnmaA4$8nntRg0TqKUfOI9R.HlHnIzNWmHBePerb8Qzlb.0hH.",
+      "type": "USER",
+      "id": 6
+    },
+    {
+      "email": "usear@itiszuccante.edu.it",
+      "password": "$5$ayS8XojvA9iQnjfl$OEiqtq4VtVpHSxc34qRQhiMJ4zRtkDP4KiA3Efp0pe4",
+      "type": "USER",
+      "id": 7
     }
   ]
 }
