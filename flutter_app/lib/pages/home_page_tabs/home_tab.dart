@@ -1,66 +1,88 @@
+import 'package:booking/data/model/class.dart';
+import 'package:booking/data/model/pronotation.dart';
+import 'package:booking/data/server_socket.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_datetime_picker/flutter_datetime_picker.dart';
+import 'package:intl/intl.dart';
 
 class HomeTab extends StatelessWidget {
+  final ServerSocket socket;
+
+  const HomeTab({Key key, this.socket}) : super(key: key);
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.white,
       body: Center(
         child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
-            Expanded(
-              child: ListView.builder(
-                itemBuilder: (context, position) {
-                  return GestureDetector(
-                    onTap: () {
-                      showDialog(
-                        context: context,
-                        builder: (BuildContext context) {
-                          return alertDelete(context);
-                        },
-                      );
-                    },
-                    child: Card(
-                      color: Colors.white,
-                      clipBehavior: Clip.antiAlias,
-                      child: Column(
-                        children: [
-                          ListTile(
-                              title: const Text(
-                                'Class',
-                                style: TextStyle(color: Colors.black),
-                              ),
-                              subtitle: Text(
-                                'Description',
-                                style: TextStyle(color: Colors.black),
-                              ),
-                              trailing: TextButton(
-                                //textColor: const Color(0xFF4CAF50),
-                                onPressed: () {
-                                  showDialog(
-                                    context: context,
-                                    // builder: (BuildContext context) =>_buildAboutDialog(context, selectedDate,selectedFTime, selectedSTime),
-                                  );
+            FutureBuilder<List<Class>>(
+                future: socket.getClass(),
+                builder: (BuildContext context,
+                    AsyncSnapshot<List<Class>> snapshot) {
+                  if (snapshot.hasData) {
+                    return Expanded(
+                      child: ListView.builder(
+                        itemCount: snapshot.data.length,
+                        itemBuilder: (context, index) {
+                          return GestureDetector(
+                            onTap: () {
+                              showDialog(
+                                context: context,
+                                builder: (BuildContext context) {
+                                  return alertDelete(context);
                                 },
-                                child: const Text('PRENOTA'),
-                              )),
-                        ],
+                              );
+                            },
+                            child: Card(
+                              color: Colors.white,
+                              clipBehavior: Clip.antiAlias,
+                              child: Column(
+                                children: [
+                                  ListTile(
+                                      title: Text(
+                                        snapshot.data[index].name,
+                                        style: TextStyle(color: Colors.black),
+                                      ),
+                                      subtitle: Text(
+                                        snapshot.data[index].location,
+                                        style: TextStyle(color: Colors.black),
+                                      ),
+                                      trailing: TextButton(
+                                        onPressed: () {
+                                          showDialog(
+                                            context: context,
+                                            builder: (BuildContext context) =>
+                                                _buildAboutDialog(
+                                                    context, new Prenotation()),
+                                          );
+                                        },
+                                        child: const Text(
+                                          'PRENOTA',
+                                          style: TextStyle(
+                                              color: Color(0xFF4CAF50)),
+                                        ),
+                                      )),
+                                ],
+                              ),
+                            ),
+                          );
+                        },
                       ),
-                    ),
-                  );
-                },
-                //itemCount: counter,
-              ),
-            ),
+                    );
+                  } else {
+                    return CircularProgressIndicator();
+                  }
+                }),
           ],
         ),
       ),
     );
   }
 
-  Widget _buildAboutDialog(
-      BuildContext context, selectedDate, selectedFTime, selectedSTime) {
+  Widget _buildAboutDialog(BuildContext context, Prenotation prenotation) {
     return StatefulBuilder(builder: (context, setState) {
       return new AlertDialog(
         title: const Text('Prenota:'),
@@ -69,17 +91,17 @@ class HomeTab extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: <Widget>[
             Text('Data selezionata:'),
-            Text(selectedDate == ''
+            Text(prenotation.date == ''
                 ? 'not selected'
-                : selectedDate.toString().substring(0, 10)),
+                : prenotation.date.substring(0, 10)),
             Text('Ora di inizio:'),
-            Text(selectedFTime == ''
+            Text(prenotation.oraInizio == ''
                 ? 'not selected'
-                : selectedFTime.toString().substring(11, 19)),
+                : prenotation.oraInizio.substring(11, 19)),
             Text('Ora di fine:'),
-            Text(selectedSTime == ''
+            Text(prenotation.oraFine == ''
                 ? 'not selected'
-                : selectedSTime.toString().substring(11, 19)),
+                : prenotation.oraFine.substring(11, 19)),
             SizedBox(
               height: 10,
             ),
@@ -96,7 +118,7 @@ class HomeTab extends StatelessWidget {
                       print('change $date');
                     }, onConfirm: (date) {
                       print('confirm $date');
-                      selectedDate = date;
+                      prenotation.date = date.toString();
                       setState(() {});
                     }, currentTime: DateTime.now(), locale: LocaleType.it);
                   },
@@ -113,9 +135,10 @@ class HomeTab extends StatelessWidget {
                           date.timeZoneOffset.inHours.toString());
                     }, onConfirm: (date) {
                       print('confirm $date');
-                      if (selectedFTime != '') {
-                        if (date.isAfter(selectedFTime)) {
-                          selectedSTime = date;
+                      if (prenotation.oraInizio != '') {
+                        if (date
+                            .isAfter(DateFormat().parse(prenotation.oraFine))) {
+                          prenotation.oraInizio = date.toString();
                         } else {
                           showDialog(
                             context: context,
@@ -125,7 +148,7 @@ class HomeTab extends StatelessWidget {
                           );
                         }
                       } else {
-                        selectedFTime = date;
+                        prenotation.oraInizio = date.toString();
                       }
                       setState(() {});
                     }, currentTime: DateTime.now());
@@ -143,8 +166,10 @@ class HomeTab extends StatelessWidget {
             onPressed: () {
               Navigator.of(context).pop();
             },
-            //textColor: Theme.of(context).primaryColor,
-            child: const Text('Fine'),
+            child: const Text(
+              'Fine',
+              style: TextStyle(color: Colors.blue),
+            ),
           ),
         ],
       );

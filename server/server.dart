@@ -46,45 +46,42 @@ class Client {
     switch (package.code) {
       case 1:
         {
-          List<Package> response = await http.getUsers();
+          Package response = await http.getUsers();
 
-          bool userAlreadyExist = response
+          bool userAlreadyExist = response.data
               .where((element) =>
-                  element.data.containsValue(package.data["email"]))
+                  element.containsValue(package.data.first["email"]))
               .isNotEmpty;
-
           if (!userAlreadyExist) {
             await http.postUser(package);
+
             this.socket.write(new Package(1, package.data, "OK").toJson());
           } else {
-            this.socket.write(
-                new Package(1, new Map<String, dynamic>(), "ERROR").toJson());
+            this.socket.write(new Package(1, [], "ERROR").toJson());
           }
           break;
         }
       case 2:
         {
           print(package.data.toString());
-          await http.updateUser(package.data);
-          List<Package> response = await http.getUsers();
-          bool userAlreadyExist = response
+
+          Package response = await http.getUsers();
+          bool userAlreadyExist = response.data
               .where((element) =>
-                  element.data.containsValue(package.data["email"]))
+                  element.containsValue(package.data.first["email"]))
               .isNotEmpty;
 
           if (userAlreadyExist) {
-            this.socket.write(new Package(
-                    2,
-                    response
-                        .where((element) =>
-                            element.data.containsValue(package.data["email"]))
-                        .single
-                        .data,
-                    "OK")
-                .toJson());
+            List<Map<String, dynamic>> data = [];
+            data.add(response.data
+                .where((element) =>
+                    element.containsValue(package.data.first["email"]))
+                .first);
+            print("login:");
+            print(data);
+            this.socket.write(new Package(2, data, "OK").toJson());
           } else {
-            this.socket.write(
-                new Package(2, new Map<String, dynamic>(), "ERROR").toJson());
+            this.socket.write(new Package(2, [], "ERROR").toJson());
           }
           break;
         }

@@ -40,11 +40,11 @@ class HomePage extends StatelessWidget {
               Tab(icon: Icon(Icons.calendar_today)),
             ],
           ),
-          title: Text(user.email),
+          title: Text(user.email.split("@")[0]),
         ),
         body: TabBarView(
           children: [
-            HomeTab(),
+            HomeTab(socket: socket),
             CalendarTab(),
           ],
         ),

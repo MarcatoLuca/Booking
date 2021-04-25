@@ -58,15 +58,19 @@ class User {
 
   void save(
       ServerSocket socket, AppDatabase appDatabase, UserCubit userCubit) async {
+    List<Map<String, dynamic>> data = [];
     this.type = "USER";
-    User user = await socket.saveOrLogin(this.toMap(), 1);
-    userCubit.tryLogin(appDatabase, user, true);
+    data.add(this.toMap());
+    User user = await socket.saveAndLogin(data, 1);
+    userCubit.tryLogin(appDatabase, user);
   }
 
   void login(
       ServerSocket socket, AppDatabase appDatabase, UserCubit userCubit) async {
-    User user = await socket.saveOrLogin(this.toMap(), 2);
-    userCubit.tryLogin(appDatabase, user, false);
+    List<Map<String, dynamic>> data = [];
+    data.add(this.toMap());
+    User user = await socket.saveAndLogin(data, 2);
+    userCubit.tryLogin(appDatabase, user);
   }
 
   @override

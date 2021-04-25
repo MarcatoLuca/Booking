@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'dart:io';
 
+import 'package:booking/data/model/class.dart';
 import 'package:booking/data/model/user.dart';
 
 class ServerSocket {
@@ -41,17 +42,31 @@ class ServerSocket {
     _socket.destroy();
   }
 
-  Future<User> saveOrLogin(Map<String, dynamic> data, int code) async {
-    User user;
+  Future<User> saveAndLogin(List<Map<String, dynamic>> data, int code) async {
+    User user = new User();
     await Socket.connect("192.168.1.55", 8080).then((Socket sock) async {
-      sock.write(Package(code, data, "").toJson());
+      sock.write(Package(code: code, data: data, msg: "").toJson());
       await sock.listen((data) {
         Package package = Package.fromJson(String.fromCharCodes(data));
         sock.destroy();
-        user = new User.fromJson(package.data);
+        if (package.data.first != null) {
+          user = new User.fromJson(package.data.first);
+        }
       }).asFuture();
     });
     return user;
+  }
+
+  Future<List<Class>> getClass() async {
+    List<Class> data = [];
+    await Socket.connect("192.168.1.55", 8080).then((Socket sock) async {
+      sock.write(Package(code: 3, data: [], msg: "").toJson());
+      await sock.listen((data) {
+        Package package = Package.fromJson(String.fromCharCodes(data));
+        sock.destroy();
+        //package.data
+      }).asFuture();
+    });
   }
 }
 
@@ -59,12 +74,16 @@ class ServerSocket {
 /// 0 - server <--> database
 /// 1 - user signup
 /// 2 - user login
+/// 3 - class
 class Package {
   int code;
-  Map<String, dynamic> data;
+  List<Map<String, dynamic>> data;
   String msg;
 
-  Package(this.code, this.data, this.msg);
+  Package({int code, List<Map<String, dynamic>> data, String msg})
+      : code = code,
+        data = data,
+        msg = msg;
 
   Map<String, dynamic> toMap() {
     return {
@@ -76,9 +95,9 @@ class Package {
 
   factory Package.fromMap(Map<String, dynamic> map) {
     return Package(
-      map['code'],
-      Map<String, dynamic>.from(map['data']),
-      map['msg'],
+      code: map['code'],
+      data: List<Map<String, dynamic>>.from(map['data']),
+      msg: map['msg'],
     );
   }
 

@@ -6,7 +6,7 @@ import 'dart:convert';
 /// 2 - user login
 class Package {
   int code;
-  Map<String, dynamic> data;
+  List<Map<String, dynamic>> data;
   String msg;
 
   Package(this.code, this.data, this.msg);
@@ -21,7 +21,10 @@ class Package {
 
   factory Package.fromMap(Map<String, dynamic> map) {
     return Package(
-        map['code'], Map<String, dynamic>.from(map['data']), map['msg']);
+      map['code'],
+      List<Map<String, dynamic>>.from(map['data']),
+      map['msg'],
+    );
   }
 
   factory Package.fromJson(String source) =>
