@@ -46,25 +46,34 @@ class Client {
     switch (package.code) {
       case 1:
         {
+          //Controllo se l utente esiste già
           Package response = await http.getUsers();
-
           bool userAlreadyExist = response.data
               .where((element) =>
                   element.containsValue(package.data.first["email"]))
               .isNotEmpty;
+
           if (!userAlreadyExist) {
+            //Aggiungo l utente al database se non esiste
             await http.postUser(package);
 
-            this.socket.write(new Package(1, package.data, "OK").toJson());
+            //Prelevo dal database l'utente inserito per ottenere l id remoto
+            Package response = await http.getUsers();
+            List<Map<String, dynamic>> data = [];
+            data.add(response.data
+                .where((element) =>
+                    element.containsValue(package.data.first["email"]))
+                .first);
+            this.socket.write(new Package(1, data, "OK").toJson());
           } else {
+            //Se già esiste ritorno un errore
             this.socket.write(new Package(1, [], "ERROR").toJson());
           }
           break;
         }
       case 2:
         {
-          print(package.data.toString());
-
+          //Controllo se l utente esiste già
           Package response = await http.getUsers();
           bool userAlreadyExist = response.data
               .where((element) =>
@@ -72,17 +81,23 @@ class Client {
               .isNotEmpty;
 
           if (userAlreadyExist) {
+            //Se esiste ritorno l'utente
             List<Map<String, dynamic>> data = [];
             data.add(response.data
                 .where((element) =>
                     element.containsValue(package.data.first["email"]))
                 .first);
-            print("login:");
-            print(data);
             this.socket.write(new Package(2, data, "OK").toJson());
           } else {
+            //Se non esiste esiste ritorno un errore
             this.socket.write(new Package(2, [], "ERROR").toJson());
           }
+          break;
+        }
+      case 3:
+        {
+          Package response = await http.getClasses();
+          this.socket.write(new Package(3, response.data, "OK").toJson());
           break;
         }
     }

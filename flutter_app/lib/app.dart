@@ -13,7 +13,8 @@ import 'package:booking/cubit/user/user_cubit.dart';
 import 'data/server_socket.dart';
 
 class App extends StatelessWidget {
-  static const MAIN_USER = 1;
+  static const LOCAL_USER_ID = 1;
+  static var REMOTE_USER_ID = 1;
 
   final AppDatabase appDatabase;
   final ServerSocket socket;
@@ -41,7 +42,7 @@ class App extends StatelessWidget {
             return FormPage(
                 appDatabase: appDatabase, socket: socket, userCubit: userCubit);
           } else {
-            userCubit.initialize(MAIN_USER, appDatabase, socket);
+            userCubit.initialize(LOCAL_USER_ID, appDatabase, socket);
             return CircularProgressIndicator();
           }
         },

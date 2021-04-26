@@ -11,6 +11,56 @@
       "password": "$5$yk9q5udy5JmObNit$ps1pAKRHhiks9unbI8mEPsatWxG0y7s9p3/J.8OysvA",
       "type": "USER",
       "id": 2
+    },
+    {
+      "email": "user2@itiszuccante.edu.it",
+      "password": "$5$wWAIghMklmZAS3Jg$0OMHlNJVqWFg6TqCdr1cZ31XiEAt0g5QWtty2XSDe76",
+      "type": "USER",
+      "id": 3
+    },
+    {
+      "email": "user3@itiszuccante.edu.it",
+      "password": "$5$8FGs79VWrqSGyGdv$moTOSLjzbFsauOWZYPBSIWhATTY8WLjBYS5OF0e7io4",
+      "type": "USER",
+      "id": 4
     }
-  ]
+  ],
+  "class": [
+    {
+      "id": 1,
+      "name": "Aula video",
+      "location": "1 piano"
+    },
+    {
+      "id": 2,
+      "name": "Aula magna",
+      "location": "piano terra"
+    },
+    {
+      "id": 3,
+      "name": "LLM",
+      "location": "2 piano"
+    },
+    {
+      "id": 4,
+      "name": "LAP",
+      "location": "1 piano"
+    },
+    {
+      "id": 5,
+      "name": "LAP2",
+      "location": "1 piano"
+    },
+    {
+      "id": 6,
+      "name": "Aula n.12",
+      "location": "2 piano"
+    },
+    {
+      "id": 7,
+      "name": "LAS",
+      "location": "piano terra"
+    }
+  ],
+  "prenotation": []
 }

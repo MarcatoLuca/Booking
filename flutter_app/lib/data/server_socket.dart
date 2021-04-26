@@ -57,16 +57,21 @@ class ServerSocket {
     return user;
   }
 
-  Future<List<Class>> getClass() async {
-    List<Class> data = [];
+  Future<List<Class>> getClasses() async {
+    List<Class> datas = [];
     await Socket.connect("192.168.1.55", 8080).then((Socket sock) async {
       sock.write(Package(code: 3, data: [], msg: "").toJson());
       await sock.listen((data) {
         Package package = Package.fromJson(String.fromCharCodes(data));
         sock.destroy();
-        //package.data
+        if (package.data != null) {
+          package.data.forEach((element) {
+            datas.add(new Class.fromMap(element));
+          });
+        }
       }).asFuture();
     });
+    return datas;
   }
 }
 

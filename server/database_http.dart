@@ -15,7 +15,7 @@ class DatabaseHttp {
   }
 
   Future<Package> getUsers() async {
-    List pacakge = [];
+    List packages = [];
     List<Map<String, dynamic>> datas = [];
     var request = await http.get("192.168.1.55", 3000, "/user");
     var response = await request.close();
@@ -25,8 +25,24 @@ class DatabaseHttp {
         Map<String, dynamic> data = element as Map<String, dynamic>;
         datas.add(data);
       });
-      pacakge.add(new Package(0, datas, ""));
+      packages.add(new Package(0, datas, ""));
     }).asFuture();
-    return pacakge.first;
+    return packages.first;
+  }
+
+  Future<Package> getClasses() async {
+    List packages = [];
+    List<Map<String, dynamic>> datas = [];
+    var request = await http.get("192.168.1.55", 3000, "/class");
+    var response = await request.close();
+    await response.transform(utf8.decoder).listen((contents) {
+      List<dynamic> parsed = jsonDecode(contents);
+      parsed.forEach((element) {
+        Map<String, dynamic> data = element as Map<String, dynamic>;
+        datas.add(data);
+      });
+      packages.add(new Package(0, datas, ""));
+    }).asFuture();
+    return packages.first;
   }
 }

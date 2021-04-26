@@ -19,7 +19,7 @@ class HomeTab extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
             FutureBuilder<List<Class>>(
-                future: socket.getClass(),
+                future: socket.getClasses(),
                 builder: (BuildContext context,
                     AsyncSnapshot<List<Class>> snapshot) {
                   if (snapshot.hasData) {
@@ -91,15 +91,15 @@ class HomeTab extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: <Widget>[
             Text('Data selezionata:'),
-            Text(prenotation.date == ''
+            Text(prenotation.date == null
                 ? 'not selected'
                 : prenotation.date.substring(0, 10)),
             Text('Ora di inizio:'),
-            Text(prenotation.oraInizio == ''
+            Text(prenotation.oraInizio == null
                 ? 'not selected'
                 : prenotation.oraInizio.substring(11, 19)),
             Text('Ora di fine:'),
-            Text(prenotation.oraFine == ''
+            Text(prenotation.oraFine == null
                 ? 'not selected'
                 : prenotation.oraFine.substring(11, 19)),
             SizedBox(
@@ -109,7 +109,6 @@ class HomeTab extends StatelessWidget {
               mainAxisSize: MainAxisSize.min,
               children: [
                 TextButton(
-                  //color: Colors.grey.withOpacity(0.3),
                   onPressed: () {
                     DatePicker.showDatePicker(context,
                         showTitleActions: true,
@@ -127,7 +126,6 @@ class HomeTab extends StatelessWidget {
                   ),
                 ),
                 TextButton(
-                  //color: Colors.grey.withOpacity(0.3),
                   onPressed: () {
                     DatePicker.showTime12hPicker(context,
                         showTitleActions: true, onChanged: (date) {
@@ -135,10 +133,10 @@ class HomeTab extends StatelessWidget {
                           date.timeZoneOffset.inHours.toString());
                     }, onConfirm: (date) {
                       print('confirm $date');
-                      if (prenotation.oraInizio != '') {
-                        if (date
-                            .isAfter(DateFormat().parse(prenotation.oraFine))) {
-                          prenotation.oraInizio = date.toString();
+                      if (prenotation.oraInizio != null) {
+                        if (date.isAfter(DateFormat('yyyy-MM-dd HH:mm:ss')
+                            .parse(prenotation.oraInizio))) {
+                          prenotation.oraFine = date.toString();
                         } else {
                           showDialog(
                             context: context,
@@ -197,15 +195,16 @@ class HomeTab extends StatelessWidget {
       content: Text("Cancella l'aula."),
       actions: [
         TextButton(
-          //color: Colors.grey.withOpacity(0.3),
           child: Icon(Icons.delete),
           onPressed: () {
             Navigator.of(context).pop();
           },
         ),
         TextButton(
-          //color: Colors.grey.withOpacity(0.3),
-          child: Text('Annulla'),
+          child: Text(
+            'Annulla',
+            style: TextStyle(color: Colors.grey.withOpacity(0.3)),
+          ),
           onPressed: () {
             Navigator.of(context).pop();
           },

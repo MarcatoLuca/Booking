@@ -25,7 +25,6 @@ class UserCubit extends Cubit<UserState> {
     try {
       socket.connect().whenComplete(() async {
         final User user = await _userRepository.getUserCredentail(id, db);
-        print(user);
         if (user != null) {
           emit(UserAuthenticated(user));
         } else {
@@ -39,8 +38,8 @@ class UserCubit extends Cubit<UserState> {
 
   Future<void> tryLogin(AppDatabase appDatabase, User user) async {
     emit(UserLoading());
-
-    user.id = App.MAIN_USER;
+    App.REMOTE_USER_ID = user.id;
+    user.id = App.LOCAL_USER_ID;
     if (user.isNotNull()) {
       await appDatabase.userDao.insertUser(user);
       emit(UserAuthenticated(user));
