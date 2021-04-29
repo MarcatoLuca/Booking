@@ -39,12 +39,15 @@ class Class {
 }
 
 @dao
-abstract class ClassTableDao {
+abstract class ClassDao {
   @Query('SELECT * FROM class')
   Future<List<Class>> findAllClass();
 
+  @Query('SELECT * FROM class WHERE id = :id')
+  Future<Class> findClassById(int id);
+
   @Insert(onConflict: OnConflictStrategy.replace)
-  Future<void> addClass(Class classRoom);
+  Future<void> insertClass(Class classRoom);
 
   @delete
   Future<void> deleteClass(Class classRoom);

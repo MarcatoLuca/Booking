@@ -1,14 +1,23 @@
-import 'package:booking/data/model/class.dart';
-import 'package:booking/data/model/pronotation.dart';
-import 'package:booking/data/server_socket.dart';
+import 'package:booking/app.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+
 import 'package:flutter_datetime_picker/flutter_datetime_picker.dart';
+
 import 'package:intl/intl.dart';
+
+import 'package:booking/data/db/app_database.dart';
+
+import 'package:booking/data/server_socket.dart';
+
+import 'package:booking/data/model/class.dart';
+import 'package:booking/data/model/prenotation.dart';
 
 class HomeTab extends StatelessWidget {
   final ServerSocket socket;
+  final AppDatabase appDatabase;
 
-  const HomeTab({Key key, this.socket}) : super(key: key);
+  const HomeTab({Key key, this.socket, this.appDatabase}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -19,7 +28,7 @@ class HomeTab extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
             FutureBuilder<List<Class>>(
-                future: socket.getClasses(),
+                future: socket.saveAndGetClasses(appDatabase),
                 builder: (BuildContext context,
                     AsyncSnapshot<List<Class>> snapshot) {
                   if (snapshot.hasData) {
@@ -56,7 +65,9 @@ class HomeTab extends StatelessWidget {
                                             context: context,
                                             builder: (BuildContext context) =>
                                                 _buildAboutDialog(
-                                                    context, new Prenotation()),
+                                                    context,
+                                                    new Prenotation(),
+                                                    snapshot.data[index].id),
                                           );
                                         },
                                         child: const Text(
@@ -82,11 +93,12 @@ class HomeTab extends StatelessWidget {
     );
   }
 
-  Widget _buildAboutDialog(BuildContext context, Prenotation prenotation) {
+  Widget _buildAboutDialog(
+      BuildContext context, Prenotation prenotation, int classId) {
     return StatefulBuilder(builder: (context, setState) {
-      return new AlertDialog(
+      return AlertDialog(
         title: const Text('Prenota:'),
-        content: new Column(
+        content: Column(
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: <Widget>[
@@ -162,6 +174,9 @@ class HomeTab extends StatelessWidget {
         actions: <Widget>[
           new TextButton(
             onPressed: () {
+              prenotation.classId = classId;
+              prenotation.userId = App.REMOTE_USER_ID;
+              prenotation.save(socket, appDatabase);
               Navigator.of(context).pop();
             },
             child: const Text(
@@ -203,7 +218,7 @@ class HomeTab extends StatelessWidget {
         TextButton(
           child: Text(
             'Annulla',
-            style: TextStyle(color: Colors.grey.withOpacity(0.3)),
+            style: TextStyle(color: Colors.blue),
           ),
           onPressed: () {
             Navigator.of(context).pop();

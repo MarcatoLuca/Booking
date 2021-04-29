@@ -1,12 +1,14 @@
 import 'dart:convert';
 import 'dart:io';
 
+import 'package:booking/app.dart';
+import 'package:booking/data/db/app_database.dart';
 import 'package:booking/data/model/class.dart';
+import 'package:booking/data/model/prenotation.dart';
 import 'package:booking/data/model/user.dart';
 
 class ServerSocket {
   Socket _socket;
-  List<Package> messages = [];
 
   Future<Socket> connect() {
     return Socket.connect("192.168.1.55", 8080).then((Socket sock) {
@@ -23,16 +25,6 @@ class ServerSocket {
     Package package = Package.fromJson(String.fromCharCodes(data));
 
     switch (package.code) {
-      case 1:
-        {
-          messages.add(package);
-          break;
-        }
-      case 2:
-        {
-          messages.add(package);
-          break;
-        }
     }
   }
 
@@ -57,7 +49,7 @@ class ServerSocket {
     return user;
   }
 
-  Future<List<Class>> getClasses() async {
+  Future<List<Class>> saveAndGetClasses(AppDatabase appDatabase) async {
     List<Class> datas = [];
     await Socket.connect("192.168.1.55", 8080).then((Socket sock) async {
       sock.write(Package(code: 3, data: [], msg: "").toJson());
@@ -65,21 +57,85 @@ class ServerSocket {
         Package package = Package.fromJson(String.fromCharCodes(data));
         sock.destroy();
         if (package.data != null) {
-          package.data.forEach((element) {
-            datas.add(new Class.fromMap(element));
+          package.data.forEach((element) async {
+            Class classRoom = new Class.fromMap(element);
+            datas.add(classRoom);
+            await appDatabase.classDao.insertClass(classRoom);
           });
         }
       }).asFuture();
     });
     return datas;
   }
+
+  Future<void> getAllPrenotation(AppDatabase appDatabase) async {
+    await Socket.connect("192.168.1.55", 8080).then((Socket sock) async {
+      sock.write(Package(code: 4, data: [], msg: "").toJson());
+      await sock.listen((data) {
+        Package package = Package.fromJson(String.fromCharCodes(data));
+        sock.destroy();
+        if (package.data != null) {
+          package.data.forEach((element) async {
+            await appDatabase.prenotationDao
+                .insertPrenotation(new Prenotation.fromMap(element));
+          });
+        }
+      }).asFuture();
+    });
+  }
+
+  Future<List<Prenotation>> getMyPrenotation(int userId) async {
+    List<Prenotation> datas = [];
+    await Socket.connect("192.168.1.55", 8080).then((Socket sock) async {
+      sock.write(Package(code: 4, data: [], msg: "").toJson());
+      await sock.listen((data) {
+        Package package = Package.fromJson(String.fromCharCodes(data));
+        sock.destroy();
+        if (package.data != null) {
+          package.data.forEach((element) {
+            Prenotation prenotation = new Prenotation.fromMap(element);
+            if (prenotation.userId == userId) {
+              datas.add(prenotation);
+            }
+          });
+        }
+      }).asFuture();
+    });
+    return datas;
+  }
+
+  Future<void> savePrenotation(
+      List<Map<String, dynamic>> data, AppDatabase appDatabase) async {
+    await Socket.connect("192.168.1.55", 8080).then((Socket sock) async {
+      sock.write(Package(code: 5, data: data, msg: "").toJson());
+      await sock.listen((data) async {
+        Package package = Package.fromJson(String.fromCharCodes(data));
+        sock.destroy();
+        if (package.data.first != null) {
+          await appDatabase.prenotationDao
+              .insertPrenotation(new Prenotation.fromMap(package.data.first));
+        }
+      }).asFuture();
+    });
+  }
+
+  Future<void> deletePrenotation(
+      List<Map<String, dynamic>> data, AppDatabase appDatabase, int id) async {
+    await Socket.connect("192.168.1.55", 8080).then((Socket sock) async {
+      sock.write(Package(code: 6, data: data, msg: id.toString()).toJson());
+      sock.destroy();
+    });
+  }
 }
 
 /// Code :
-/// 0 - server <--> database
+/// 0 - server dart <--> databaseHttp
 /// 1 - user signup
 /// 2 - user login
-/// 3 - class
+/// 3 - classes
+/// 4 - prenotations GET
+/// 5 - prenotation POST
+/// 6 - prenotation DELETE
 class Package {
   int code;
   List<Map<String, dynamic>> data;

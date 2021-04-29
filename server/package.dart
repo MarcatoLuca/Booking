@@ -1,9 +1,13 @@
 import 'dart:convert';
 
 /// Code :
-/// 0 - server <--> database
+/// 0 - server dart <--> databaseHttp
 /// 1 - user signup
 /// 2 - user login
+/// 3 - classes
+/// 4 - prenotations GET
+/// 5 - prenotation POST
+/// 6 - prenotation DELETE
 class Package {
   int code;
   List<Map<String, dynamic>> data;

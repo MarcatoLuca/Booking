@@ -191,12 +191,18 @@ class _FormPage extends State<FormPage> {
                 if (_formKey.currentState.validate()) {
                   if (state) {
                     //SIGNUP
-                    user.save(
+                    bool logged = await user.save(
                         widget.socket, widget.appDatabase, widget.userCubit);
+                    if (!logged)
+                      return alertError(context,
+                          "Esiste gia un utente registrato con questa email");
                   } else {
                     //LOGIN
-                    user.login(
+                    bool logged = await user.login(
                         widget.socket, widget.appDatabase, widget.userCubit);
+                    if (!logged)
+                      return alertError(context,
+                          "Non esiste alcun utente registrato con questa email");
                   }
                 }
               },
@@ -223,5 +229,20 @@ class _FormPage extends State<FormPage> {
         ],
       ),
     ));
+  }
+
+  Widget alertError(context, String message) {
+    return AlertDialog(
+      title: Text("Errore:"),
+      content: Text(message),
+      actions: [
+        TextButton(
+          child: Text("OK"),
+          onPressed: () {
+            Navigator.of(context).pop();
+          },
+        ),
+      ],
+    );
   }
 }

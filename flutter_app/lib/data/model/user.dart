@@ -56,21 +56,17 @@ class User {
         .hasMatch(this.email);
   }
 
-  void save(
+  Future<bool> save(
       ServerSocket socket, AppDatabase appDatabase, UserCubit userCubit) async {
-    List<Map<String, dynamic>> data = [];
     this.type = "USER";
-    data.add(this.toMap());
-    User user = await socket.saveAndLogin(data, 1);
-    userCubit.tryLogin(appDatabase, user);
+    User user = await socket.saveAndLogin([this.toMap()], 1);
+    return userCubit.tryLogin(appDatabase, user);
   }
 
-  void login(
+  Future<bool> login(
       ServerSocket socket, AppDatabase appDatabase, UserCubit userCubit) async {
-    List<Map<String, dynamic>> data = [];
-    data.add(this.toMap());
-    User user = await socket.saveAndLogin(data, 2);
-    userCubit.tryLogin(appDatabase, user);
+    User user = await socket.saveAndLogin([this.toMap()], 2);
+    return userCubit.tryLogin(appDatabase, user);
   }
 
   @override

@@ -42,12 +42,19 @@ class HomePage extends StatelessWidget {
           ),
           title: Text(user.email.split("@")[0]),
         ),
-        body: TabBarView(
-          children: [
-            HomeTab(socket: socket),
-            CalendarTab(),
-          ],
-        ),
+        body: FutureBuilder<void>(
+            future: socket.getAllPrenotation(appDatabase),
+            builder: (BuildContext context, AsyncSnapshot<void> snapshot) {
+              return TabBarView(
+                children: [
+                  HomeTab(socket: socket),
+                  CalendarTab(
+                    socket: socket,
+                    appDatabase: appDatabase,
+                  )
+                ],
+              );
+            }),
       ),
     );
   }

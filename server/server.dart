@@ -97,7 +97,28 @@ class Client {
       case 3:
         {
           Package response = await http.getClasses();
+          //Ritorno le classi presenti nel db
           this.socket.write(new Package(3, response.data, "OK").toJson());
+          break;
+        }
+      case 4:
+        {
+          Package response = await http.getPrenotations();
+          //Ritorno le prenotazioni di tutte le aule prenotate
+          this.socket.write(new Package(4, response.data, "OK").toJson());
+          break;
+        }
+      case 5:
+        {
+          Package response = await http.savePrenotation(package);
+          //Ritorno le prenotazioni di tutte le aule prenotate
+          this.socket.write(new Package(4, response.data, "OK").toJson());
+          break;
+        }
+      case 6:
+        {
+          await http.deletePrenotation(package);
+          //Ritorno le prenotazioni di tutte le aule prenotate
           break;
         }
     }

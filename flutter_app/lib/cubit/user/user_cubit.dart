@@ -36,16 +36,19 @@ class UserCubit extends Cubit<UserState> {
     }
   }
 
-  Future<void> tryLogin(AppDatabase appDatabase, User user) async {
+  Future<bool> tryLogin(AppDatabase appDatabase, User user) async {
+    bool logged = false;
     emit(UserLoading());
     App.REMOTE_USER_ID = user.id;
     user.id = App.LOCAL_USER_ID;
     if (user.isNotNull()) {
       await appDatabase.userDao.insertUser(user);
+      logged = true;
       emit(UserAuthenticated(user));
     } else {
       emit(UserNotAuthenicated("This User Already Exist"));
     }
+    return logged;
   }
 
   Future<void> logout(AppDatabase appDatabase, User user) async {
