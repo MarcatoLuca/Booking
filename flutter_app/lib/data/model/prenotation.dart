@@ -10,7 +10,7 @@ import 'package:floor/floor.dart';
 
 @Entity(tableName: 'prenotation')
 class Prenotation {
-  @PrimaryKey(autoGenerate: true)
+  @PrimaryKey(autoGenerate: false)
   final int id;
   String date;
   String oraInizio;
@@ -42,6 +42,15 @@ class Prenotation {
         userId = userId,
         classId = classId;
 
+  factory Prenotation.fromJson(Map<String, dynamic> json) => new Prenotation(
+        id: json["id"],
+        date: json["date"],
+        oraInizio: json["oraInizio"],
+        oraFine: json["oraFine"],
+        userId: json["userId"],
+        classId: json["classId"],
+      );
+
   Map<String, dynamic> toMap() {
     return {
       'id': id,
@@ -52,22 +61,6 @@ class Prenotation {
       'classId': classId,
     };
   }
-
-  factory Prenotation.fromMap(Map<String, dynamic> map) {
-    return Prenotation(
-      id: map['id'],
-      date: map['date'],
-      oraInizio: map['oraInizio'],
-      oraFine: map['oraFine'],
-      userId: map['userId'],
-      classId: map['classId'],
-    );
-  }
-
-  String toJson() => json.encode(toMap());
-
-  factory Prenotation.fromJson(String source) =>
-      Prenotation.fromMap(json.decode(source));
 
   void save(ServerSocket socket, AppDatabase appDatabase) async {
     await socket.savePrenotation([this.toMap()], appDatabase);
@@ -88,6 +81,14 @@ class Prenotation {
 
   String getOraFine() {
     return this.oraFine.split(" ")[1].split(".")[0];
+  }
+
+  bool isNotNull() {
+    return this.classId != null &&
+        this.date != null &&
+        this.oraFine != null &&
+        this.oraInizio != null &&
+        this.userId != null;
   }
 }
 

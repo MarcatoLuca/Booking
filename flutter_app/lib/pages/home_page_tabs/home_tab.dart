@@ -1,6 +1,6 @@
 import 'package:booking/app.dart';
+import 'package:floor/floor.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
 
 import 'package:flutter_datetime_picker/flutter_datetime_picker.dart';
 
@@ -176,7 +176,8 @@ class HomeTab extends StatelessWidget {
             onPressed: () {
               prenotation.classId = classId;
               prenotation.userId = App.REMOTE_USER_ID;
-              prenotation.save(socket, appDatabase);
+              if (prenotation.isNotNull())
+                prenotation.save(socket, appDatabase);
               Navigator.of(context).pop();
             },
             child: const Text(

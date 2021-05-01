@@ -86,9 +86,9 @@ class _$AppDatabase extends AppDatabase {
         await database.execute(
             'CREATE TABLE IF NOT EXISTS `user` (`id` INTEGER, `email` TEXT, `password` TEXT, `type` TEXT, PRIMARY KEY (`id`))');
         await database.execute(
-            'CREATE TABLE IF NOT EXISTS `class` (`id` INTEGER PRIMARY KEY AUTOINCREMENT, `name` TEXT, `location` TEXT)');
+            'CREATE TABLE IF NOT EXISTS `class` (`id` INTEGER, `name` TEXT, `location` TEXT, PRIMARY KEY (`id`))');
         await database.execute(
-            'CREATE TABLE IF NOT EXISTS `prenotation` (`id` INTEGER PRIMARY KEY AUTOINCREMENT, `date` TEXT, `oraInizio` TEXT, `oraFine` TEXT, `userId` INTEGER, `classId` INTEGER)');
+            'CREATE TABLE IF NOT EXISTS `prenotation` (`id` INTEGER, `date` TEXT, `oraInizio` TEXT, `oraFine` TEXT, `userId` INTEGER, `classId` INTEGER, PRIMARY KEY (`id`))');
 
         await callback?.onCreate?.call(database, version);
       },

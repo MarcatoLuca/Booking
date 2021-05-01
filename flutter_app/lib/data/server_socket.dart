@@ -21,7 +21,6 @@ class ServerSocket {
   }
 
   void _dataHandler(data) {
-    print(String.fromCharCodes(data));
     Package package = Package.fromJson(String.fromCharCodes(data));
 
     switch (package.code) {
@@ -58,8 +57,9 @@ class ServerSocket {
         sock.destroy();
         if (package.data != null) {
           package.data.forEach((element) async {
-            Class classRoom = new Class.fromMap(element);
+            Class classRoom = new Class.fromJson(element);
             datas.add(classRoom);
+
             await appDatabase.classDao.insertClass(classRoom);
           });
         }
@@ -77,7 +77,7 @@ class ServerSocket {
         if (package.data != null) {
           package.data.forEach((element) async {
             await appDatabase.prenotationDao
-                .insertPrenotation(new Prenotation.fromMap(element));
+                .insertPrenotation(new Prenotation.fromJson(element));
           });
         }
       }).asFuture();
@@ -93,7 +93,7 @@ class ServerSocket {
         sock.destroy();
         if (package.data != null) {
           package.data.forEach((element) {
-            Prenotation prenotation = new Prenotation.fromMap(element);
+            Prenotation prenotation = new Prenotation.fromJson(element);
             if (prenotation.userId == userId) {
               datas.add(prenotation);
             }
@@ -113,7 +113,7 @@ class ServerSocket {
         sock.destroy();
         if (package.data.first != null) {
           await appDatabase.prenotationDao
-              .insertPrenotation(new Prenotation.fromMap(package.data.first));
+              .insertPrenotation(new Prenotation.fromJson(package.data.first));
         }
       }).asFuture();
     });

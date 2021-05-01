@@ -35,6 +35,11 @@ class User {
         type: json["type"],
       );
 
+  @override
+  String toString() {
+    return 'User(id: $id, email: $email, password: $password, type: $type)';
+  }
+
   bool isNotNull() {
     return this.id != null &&
         this.type != null &&
@@ -69,9 +74,8 @@ class User {
     return userCubit.tryLogin(appDatabase, user);
   }
 
-  @override
-  String toString() {
-    return 'User(id: $id, email: $email, password: $password, type: $type)';
+  String getUsername() {
+    return this.email.split("@")[0];
   }
 }
 

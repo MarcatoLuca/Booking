@@ -1,10 +1,8 @@
-import 'dart:convert';
-
 import 'package:floor/floor.dart';
 
 @Entity(tableName: 'class')
 class Class {
-  @PrimaryKey(autoGenerate: true)
+  @PrimaryKey(autoGenerate: false)
   final int id;
   String name;
   String location;
@@ -25,17 +23,14 @@ class Class {
     };
   }
 
-  factory Class.fromMap(Map<String, dynamic> map) {
-    return Class(
-      id: map['id'],
-      name: map['name'],
-      location: map['location'],
-    );
-  }
+  factory Class.fromJson(Map<String, dynamic> json) => new Class(
+        id: json["id"],
+        name: json["name"],
+        location: json["location"],
+      );
 
-  String toJson() => json.encode(toMap());
-
-  factory Class.fromJson(String source) => Class.fromMap(json.decode(source));
+  @override
+  String toString() => 'Class(id: $id, name: $name, location: $location)';
 }
 
 @dao

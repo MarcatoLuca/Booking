@@ -5,7 +5,7 @@ import 'package:booking/data/model/prenotation.dart';
 import 'package:floor/floor.dart';
 
 import 'package:sqflite/sqflite.dart' as sqflite;
-import 'package:path/path.dart';
+
 import 'package:booking/data/model/user.dart';
 
 part 'app_database.g.dart'; // the generated code will be there

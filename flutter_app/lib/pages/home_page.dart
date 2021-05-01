@@ -40,14 +40,17 @@ class HomePage extends StatelessWidget {
               Tab(icon: Icon(Icons.calendar_today)),
             ],
           ),
-          title: Text(user.email.split("@")[0]),
+          title: Text(user.getUsername()),
         ),
         body: FutureBuilder<void>(
             future: socket.getAllPrenotation(appDatabase),
             builder: (BuildContext context, AsyncSnapshot<void> snapshot) {
               return TabBarView(
                 children: [
-                  HomeTab(socket: socket),
+                  HomeTab(
+                    socket: socket,
+                    appDatabase: appDatabase,
+                  ),
                   CalendarTab(
                     socket: socket,
                     appDatabase: appDatabase,
