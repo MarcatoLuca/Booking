@@ -1,5 +1,6 @@
 import 'package:booking/app.dart';
-import 'package:floor/floor.dart';
+import 'package:booking/data/model/user.dart';
+
 import 'package:flutter/material.dart';
 
 import 'package:flutter_datetime_picker/flutter_datetime_picker.dart';
@@ -16,8 +17,10 @@ import 'package:booking/data/model/prenotation.dart';
 class HomeTab extends StatelessWidget {
   final ServerSocket socket;
   final AppDatabase appDatabase;
+  final User user;
 
-  const HomeTab({Key key, this.socket, this.appDatabase}) : super(key: key);
+  const HomeTab({Key key, this.socket, this.appDatabase, this.user})
+      : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -37,14 +40,7 @@ class HomeTab extends StatelessWidget {
                         itemCount: snapshot.data.length,
                         itemBuilder: (context, index) {
                           return GestureDetector(
-                            onTap: () {
-                              showDialog(
-                                context: context,
-                                builder: (BuildContext context) {
-                                  return alertDelete(context);
-                                },
-                              );
-                            },
+                            onTap: () {},
                             child: Card(
                               color: Colors.white,
                               clipBehavior: Clip.antiAlias,
@@ -173,11 +169,32 @@ class HomeTab extends StatelessWidget {
         ),
         actions: <Widget>[
           new TextButton(
-            onPressed: () {
+            onPressed: () async {
               prenotation.classId = classId;
               prenotation.userId = App.REMOTE_USER_ID;
-              if (prenotation.isNotNull())
-                prenotation.save(socket, appDatabase);
+              if (prenotation.isNotNull()) {
+                if (user.type == "ADMIN") {
+                  prenotation.save(socket, appDatabase);
+                } else {
+                  List<Prenotation> isPrenotated =
+                      await appDatabase.prenotationDao.checkIfClassIsFree(
+                          prenotation.oraInizio,
+                          prenotation.oraFine,
+                          prenotation.oraInizio,
+                          prenotation.oraFine);
+                  if (isPrenotated.isEmpty) {
+                    prenotation.save(socket, appDatabase);
+                  }
+                }
+              } else {
+                return showDialog(
+                  context: context,
+                  builder: (BuildContext context) {
+                    return alertErrorNull(context);
+                  },
+                );
+              }
+
               Navigator.of(context).pop();
             },
             child: const Text(
@@ -194,6 +211,21 @@ class HomeTab extends StatelessWidget {
     return AlertDialog(
       title: Text("Errore:"),
       content: Text("Selezionare un orario valido."),
+      actions: [
+        TextButton(
+          child: Text("OK"),
+          onPressed: () {
+            Navigator.of(context).pop();
+          },
+        ),
+      ],
+    );
+  }
+
+  Widget alertErrorNull(context) {
+    return AlertDialog(
+      title: Text("Errore:"),
+      content: Text("Selezionare correttamente data e orario."),
       actions: [
         TextButton(
           child: Text("OK"),

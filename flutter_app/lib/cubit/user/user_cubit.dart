@@ -39,6 +39,7 @@ class UserCubit extends Cubit<UserState> {
   Future<bool> tryLogin(AppDatabase appDatabase, User user) async {
     bool logged = false;
     emit(UserLoading());
+    print(user.id);
     App.REMOTE_USER_ID = user.id;
     user.id = App.LOCAL_USER_ID;
     if (user.isNotNull()) {

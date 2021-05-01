@@ -50,10 +50,12 @@ class HomePage extends StatelessWidget {
                   HomeTab(
                     socket: socket,
                     appDatabase: appDatabase,
+                    user: user,
                   ),
                   CalendarTab(
                     socket: socket,
                     appDatabase: appDatabase,
+                    user: user,
                   )
                 ],
               );

@@ -90,6 +90,11 @@ class Prenotation {
         this.oraInizio != null &&
         this.userId != null;
   }
+
+  @override
+  String toString() {
+    return 'Prenotation(id: $id, date: $date, oraInizio: $oraInizio, oraFine: $oraFine, userId: $userId, classId: $classId)';
+  }
 }
 
 @dao

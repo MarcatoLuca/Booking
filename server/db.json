@@ -23,6 +23,12 @@
       "password": "$5$8FGs79VWrqSGyGdv$moTOSLjzbFsauOWZYPBSIWhATTY8WLjBYS5OF0e7io4",
       "type": "USER",
       "id": 4
+    },
+    {
+      "email": "user4@itiszuccante.edu.it",
+      "password": "$5$JrRZjrU3vBn6SxNN$uXMLdWh6J56wCMvL2ySNrRSXpu3PgGufbi.SVHICj99",
+      "type": "ADMIN",
+      "id": 5
     }
   ],
   "class": [
@@ -64,10 +70,34 @@
   ],
   "prenotation": [
     {
-      "id": 1,
-      "date": "2021-05-01 19:06:03.833863",
-      "oraInizio": "2021-05-01 19:06:00.000",
-      "oraFine": "2021-05-01 19:08:00.000",
+      "id": 5,
+      "date": "2021-05-01 20:20:10.099643",
+      "oraInizio": "2021-05-01 19:01:00.000",
+      "oraFine": "2021-05-01 19:49:00.000",
+      "userId": 1,
+      "classId": 1
+    },
+    {
+      "id": 6,
+      "date": "2021-05-01 20:22:54.527289",
+      "oraInizio": "2021-05-01 20:22:00.000",
+      "oraFine": "2021-05-01 20:31:00.000",
+      "userId": 5,
+      "classId": 1
+    },
+    {
+      "id": 7,
+      "date": "2021-05-01 20:34:05.015704",
+      "oraInizio": "2021-05-01 20:34:00.000",
+      "oraFine": "2021-05-01 20:44:00.000",
+      "userId": 1,
+      "classId": 1
+    },
+    {
+      "id": 8,
+      "date": "2021-05-01 20:37:20.228949",
+      "oraInizio": "2021-05-01 20:37:00.000",
+      "oraFine": "2021-05-01 20:40:00.000",
       "userId": 1,
       "classId": 1
     }

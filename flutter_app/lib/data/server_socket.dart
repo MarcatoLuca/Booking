@@ -68,7 +68,8 @@ class ServerSocket {
     return datas;
   }
 
-  Future<void> getAllPrenotation(AppDatabase appDatabase) async {
+  Future<List<Prenotation>> getAllPrenotation(AppDatabase appDatabase) async {
+    List<Prenotation> datas = [];
     await Socket.connect("192.168.1.55", 8080).then((Socket sock) async {
       sock.write(Package(code: 4, data: [], msg: "").toJson());
       await sock.listen((data) {
@@ -76,12 +77,15 @@ class ServerSocket {
         sock.destroy();
         if (package.data != null) {
           package.data.forEach((element) async {
+            Prenotation prenotation = new Prenotation.fromJson(element);
+            datas.add(prenotation);
             await appDatabase.prenotationDao
                 .insertPrenotation(new Prenotation.fromJson(element));
           });
         }
       }).asFuture();
     });
+    return datas;
   }
 
   Future<List<Prenotation>> getMyPrenotation(int userId) async {
